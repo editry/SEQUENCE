@@ -1,0 +1,563 @@
+ffmpeg -i /media/subhaapu/EDITFX/All_Reel_HD_Airindia-HD.mp4 -codec:v h264 -qscale:v 4.1 -v:b 1200 -pix_fmt yuv420p -acodec libfaac -ar 48000 -flags +aic+mv4 JodiLoveDilenaPrane_x264_acc_1080p.mp4
+
+ffmpeg -i out_for_blue_ray.ts -target pal-dvd -ps 4000000000 -aspect 16:9 out_dvd_video.mpeg
+
+ ffmpeg -y -i /media/subhaapu/JLDP_HD/BLURAY/All_Reel_HD_BLUERAY.mov -i ./Surround-002l-DolbyDigitalProfessional-5-1.ac3 -map 0:0 -map 1:0 -c:v libx264 -preset slow -tune film -b:v 26M -pix_fmt yuv420p -x264opts bluray-compat=1 -vf subtitles=SUB.srt -acodec copy Bluray.ts
+
+ffmpeg -y -i /media/subhaapu/JLDP_HD/BLURAY/All_Reel_HD_BLUERAY_NEW.mov -i ./Surround-0002l-Dolby\\ Digital\\ Professional\\ 5.1.ac3 -map 0:0 -map 1:0 -c:v libx264 -preset slow -tune film -b:v 20M -pix_fmt yuv420p -x264opts bluray-compat=1 -vf subtitles=BLUERAY_sub.srt -acodec copy CensorCopy.ts 
+
+ffmpeg -y -f concat -i /home/subhaapu/Documents/DCP_PROJECTS/BLUE_RAY/Phoring/List.txt -c:v libx264 -preset slow -tune film -b:v 30M -pix_fmt yuv420p -x264opts bluray-compat=1 -acodec ac3 -ab 448k Phoring.ts
+
+ffmpeg -y -i ./ff_prores_movie.mov -r 24 -an -profile:v 3 -cinema_mode 1 -format 0 -numresolution 6 -compression_level 30 -prog_order 4 -pix_fmt xyz12le -threads 4 ./j2k/%08d.j2c
+
+ffmpeg -y -i ./ff_prores_movie.mov -r 24 -an -profile:v 3 -cinema_mode 1 -format 0 -numresolution 6 -compression_level 30 -prog_order 4 -pix_fmt xyz12le -filter:v subtitles=Sub_rl01.srt -threads 4 ./j2k/%08d.j2c
+
+ffmpeg -y -r 24 -pattern_type glob -i "./Final_DPX/*.dpx" -r 24 -an -profile:v 3 -cinema_mode 1 -format 0 -numresolution 6 -compression_level 30 -prog_order 4 -pix_fmt xyz12le -filter:v subtitles=Sub_Project.srt -threads 4 ./j2k/%08d.j2c
+
+$ ffmpeg -y -i ./Gravity.2013.1080p.BluRay.x264.YIFY.mp4 -c:v libx264 -r 24 -preset slow -tune film -b:v 20M -pix_fmt yuv420p -vf "colormatrix=bt601:bt709" -x264opts bluray-compat=1:vbv-bufsize=30000:vbv-maxrate=40000:colorprim=bt709:transfer=bt709:colormatrix=bt709:fullrange=off -s 1920:1080 -acodec ac3 -ab 448k Test.ts 
+
+
+FINAL CODEC FOR BLURAY 28-10-14
+
+ffmpeg -y -i /media/subhaapu/JLDP_HD/BLURAY/All_Reel_HD_BLUERAY_NEW.mov -i ./Surround-0002l-Dolby\\ Digital\\ Professional\\ 5.1.ac3 -map 0:0 -map 1:0 -c:v libx264 -preset slow -tune film -b:v 20M -pix_fmt yuv420p -vf "colormatrix=bt601:bt709" -x264opts bluray-compat=1:vbv-bufsize=30000:vbv-maxrate=40000:colorprim=bt709:transfer=bt709:colormatrix=bt709:fullrange=off -acodec copy CensorCopy.ts 
+
+With Audio:
+
+ ffmpeg -y -i JLDP_TRAILER_PANOROMA_03_MIN.mov -c:v libx264 -preset slow -tune film -b:v 20M -pix_fmt yuv420p -vf "colormatrix=bt601:bt709" -x264opts bluray-compat=1:vbv-bufsize=30000:vbv-maxrate=40000:colorprim=bt709:transfer=bt709:colormatrix=bt709:fullrange=off -acodec ac3 -ab 448k trailer.ts 
+
+FINAL CODEC FOR DCP PLAYback 28-10-14
+
+ffmpeg -lowres 2 -ss 0 -r 24 -i dcp_video.mxf -ss 0 -i dcp_audio.mxf -ac: 2 -c:v mpeg2video -f avi - | ffplay -
+
+Modifications :-
+
+ffmpeg -lowres 2 -ss 0 -r 24 -i 'VideoFile.mxf' -ss 0 -i 'AudioFile.mxf' -ac: 2 -c:v libx264 -f avi - | ffplay -
+
+lowres 0 = full Size
+lowres 1 = 50%
+lowres 2 = 25%
+
+playback 
+
+SPACE BAR----->  PAUSE/PLAY
+q----------> Quite
+f----------> toggle full screen 
+
+FINAL CODEC FOR ENCODING mpeg2 MXF 
+
+ffmpeg -i ff_prores_movie.mov -vcodec mpeg2video -q:v 4 -pix_fmt yuv420p -acodec pcm_s16le -ar 48000 -ac 2 output.mxf
+
+5.1 AUDIO
+
+RAW LPCM (Blu-ray Channel Order)
+
+Left, Right, Center, Left Surround, Right Surround, LFE
+
+
+sox -v 1 ch1.wav -v 1 ch2.wav -v 1 ch3.wav -v 1 ch4.wav -c 4 4ch.wav
+
+
+sox -M L.flac R.flac C.flac LFE.flac LS.flac RS.flac output.wav
+
+
+6 \327 mono \u2192 5.1
+
+6 mono inputs to 5.1 output
+
+Combine 6 mono inputs into one 5.1 (6 channel) output with the amerge audio filter:
+
+ffmpeg -i front_left.wav -i front_right.wav -i front_center.wav -i lfe.wav -i back_left.wav -i back_right.wav \\
+-filter_complex "[0:a][1:a][2:a][3:a][4:a][5:a]amerge=inputs=6[aout]" -map "[aout]" output.wav
+
+All inputs must have the same sample rate and format. If inputs do not have the same duration the output will stop with the shortest. 
+
+
+
+MY FFMPEG BUILD
+
+PATH="$PATH:$HOME/bin" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --extra-cflags="-I$HOME/ffmpeg_build/include"  --extra-ldflags="-L$HOME/ffmpeg_build/lib"  --bindir="$HOME/bin" --extra-libs=-ldl --enable-gpl --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-librtmp --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-nonfree --enable-version3 --enable-x11grab --enable-libopenjpeg --enable-libxvid \u2013enable-avfilter --enable-libass \u2013enable-libx265
+
+AUDIO FROM VIDEO
+
+
+ffmpeg -y -i Montana\\ Vista\\ TVC\\ 20\\ sec\\ HD.mov -an -r 25 -acodec pcm_s24le -ar 48000 ./Audio/audio.wav 
+
+
+DCP TO AC3
+ ffmpeg -ss 0 -i /media/subhaapu/89_DPX_01/89_BNG_FEATURE_2014_SMPTE_2K_DCP_BY_AUROCHOS/89_BNG_FEATURE_2014_SMPTE_2K_DCP_BY_AUROCHOS_OV_AUDIO.mxf -acodec ac3 -ab 448k audio.ac3
+
+DCP TO BLUERAY
+
+ffmpeg -y -ss 0 -i /media/subhaapu/89_DPX_01/DCP\\ \\&\\ BLU\\ RAY\\ MASTER/89_DCP/89_FTR_S_BN-XX_IN-A_51_2K_XX_20141101_TMP_OV_video.mxf -an -c:v libx264 -preset slow -tune film -b:v 20M -pix_fmt yuv420p -vf "colormatrix=bt601:bt709,scale=min(1920\\,a*1080):min(1080\\,1920/a),pad=1920:1080:(ow-iw)/2:(oh-ih)/2" -x264opts bluray-compat=1:vbv-bufsize=30000:vbv-maxrate=40000:colorprim=bt709:transfer=bt709:colormatrix=bt709:fullrange=off Video_stream.ts
+
+FINAL TIFF TO DCI TIFF
+
+ffmpeg -y -f image2 -pattern_type glob -i '/home/subhaapu/Documents/DCP_PROJECTS/LORAI/TIFF/*.tif' -pix_fmt rgb24 -vcodec tiff '/home/subhaapu/Documents/DCP_PROJECTS/LORAI/ffTIFF/%06d.tiff'
+
+
+
+
+
+FINAL DCP PLAYBACK 01 \u2013 02 \u2013 15
+
+ffmpeg -lowres 2 -ss 0 -r 24 -i '/media/subhaapu/e4019687-976c-47df-a739-eed42982b326/RKK_Project/DCP_RAW/RKK-PROJECT_BNG_DOC_2015_SMPTE_OV_VIDEO.mxf' -ss 0 -i '/media/subhaapu/e4019687-976c-47df-a739-eed42982b326/RKK_Project/DCP_RAW/RKK-PROJECT_BNG_DOC_2015_SMPTE_OV_AUDIIO.mxf' -ac: 2 -c:v libx264 -f avi - | ffplay -
+
+
+FINAL DCP PLAYBACK 23 \u2013 04 -15
+ffmpeg -lowres 3 -ss 0 -r 24 -i '/home/subhaapu/Documents/DCP_PROJECTS/LORAI/DELEVARABELS/LORAI_BNG_TRAILOR_SMPTE_DCI_DCP_2014/LORAI_BNG_TRAILOR_SMPTE_DCI_DCP_2014_OV_VIDEO.mxf' -ss 0 -i '/home/subhaapu/Documents/DCP_PROJECTS/LORAI/DELEVARABELS/LORAI_BNG_TRAILOR_SMPTE_DCI_DCP_2014/LORAI_BNG_TRAILOR_SMPTE_DCI_DCP_2014_OV_AUDIO.mxf' -ac: 2 -c:v libx264 -f matroska - | ffplay -
+
+
+
+M2V DCP
+ ffmpeg -y -i '/media/subhaapu/PRATYAVRTAN_AUDIO/89_TRAILER_05042015/89_TRAILER.mov' -an -vcodec mpeg2video  -b:v 20M -q:v 1 -pix_fmt yuv420p -filter:v subtitles='/media/subhaapu/e4019687-976c-47df-a739-eed42982b326/EDITfx/89_TRAILER_SUB.srt' '/media/subhaapu/e4019687-976c-47df-a739-eed42982b326/EDITfx/input.m2v'
+
+SEGMENTING MKV files to 4 Segments
+
+1.   ffmpeg -y -i '/media/subhaapu/7A85BBF6288D30DD/Mad.Max.Fury.Road.2015.1080p.WEB-DL.DD5.1.H264-RARBG/Mad.Max.Fury.Road.2015.1080p.WEB-DL.DD5.1.H264-RARBG.mkv' -f segment -segment_times 1800,3600,5400 -vcodec copy -acodec copy '/media/subhaapu/7A85BBF6288D30DD/Out_Files/Mkv_Segment/segments02%d.mkv' 
+
+2.   ffmpeg -y -i '/media/subhaapu/7A85BBF6288D30DD/Out_Files/Mkv_Segment/Segment_01/segments020.mkv' Segment01_5.1audio.ac3 
+
+3. ffmpeg -y -i '/media/subhaapu/7A85BBF6288D30DD/Out_Files/Mkv_Segment/Segment_01/segments020.mkv' -vcodec dvvideo -acodec pcm_s16le -s pal -qscale 5 Segment01PalDV23.98fps.mov
+
+4. 5.1ac3 TO 6 mono :
+	ffmpeg -i Segment04_5.1audio.ac3 -filter_complex "channelsplit=channel_layout=5.1[FL][FR][FC][LFE][BL][BR]" -map "[FL]" 001_L.wav -map "[FR]" 002_R.wav -map "[FC]" 003_C.wav -map "[LFE]" 004_LFE.wav -map "[BL]" 005_LS.wav -map "[BR]" 006_RS.wav
+
+
+Final Interopp DCP 13-08-15
+ffmpeg -i INPUT.WHATEVER -r 24 -vcodec mpeg2video -pix_fmt yuv420p -s 1920x1080 -aspect "16:9" -b 40000k -intra -an video-out.m2v
+ffmpeg -y -i INPUT.WHATEVER -acodec pcm_s24le -ar 48000 audio.wav
+sox audio.wav left.wav remix 1
+sox audio.wav right.wav remix 2
+sox audio.wav center.wav remix 3
+sox audio.wav lfe.wav remix 4
+sox audio.wav surrleft.wav remix 5
+sox audio.wav surrright.wav remix 6
+asdcp-test -v -L -c "$(uuidgen -r).m2v.mxf" video-out.m2v
+asdcp-test -c "$(uuidgen -r).pcm.mxf" left.wav right.wav center.wav lfe.wav surleft.wav surright.wav 
+
+Codec From December2015:
+
+FFMPEG PLAYBACK DEC24_16:
+ffmpeg -lowres 2 -ss 0 -i j2c_2fb0aaa2-79be-4ee3-be79-6e42d5f678cd.mxf -ss 0 -i pcm_9c607d04-6ed7-4977-98ff-9fa7169c4c58.mxf -ac: 2 -c:v libx264 -f matroska - | ffplay -
+
+FFMPEG J2k MXF:
+ffmpeg -i Movie.avi -an -c:v libopenjpeg -profile:v 3 -cinema_mode 1 -format 0 -numresolution 6 -compression_level 30 -prog_order 4 -pix_fmt xyz12le -map 0:0 -metadata title="Picture Track" -metadata file_package_name="File Package:SMPTE 429-4 frame wrapping of JPEG 2000 codestreams" -metadata application_platform=Mac -metadata material_package_name="AS-DCP Material Package" -timecode 01:00:00:00 -s 2048x858 -f mxf_opatom Vid_Codec_test_Project.mxf
+
+FLV:
+ffmpeg -i video_origine.avi -ab 56 -ar 44100 -b 200 -r 15 -s 320x240 -f flv video_finale.flv
+
+
+MP4 To PORORES:
+ffmpeg -y -i '/media/subhaapu/Sony_8GU/Behind.Enemy.Lines.2001.720p.BluRay.x264-x0r/Behind.Enemy.Lines.2001.720p.BluRay.x264-x0r.mkv' -ss 00:21:00.000 -t 60 -c:v prores_ks -profile:v 3 -q:v 4 -vendor ap10 -pix_fmt yuv422p10le -s 2048x1152 -c:a  pcm_s16le '/media/subhaapu/Seagate Backup Plus Drive/DHUMKETU_STOCK/STOCK-LIB_TOONZ_WAR01.mov'
+
+DPX to PRORES
+
+ffmpeg -y -f image2 -pattern_type glob -i '/home/subhaapu/Documents/DCP_PROJECTS/LORAI/TIFF/*.tif' -an -c:v prores_ks -profile:v 3 -q:v 4 -vendor ap10 -pix_fmt yuv422p10le '/CG01.mov'
+
+DCP_AUDIO_TO_WAV:
+
+ ffmpeg -i '/media/subhaapu/33422C7D2A66F7E2/AgyatanamaBngV_FTR-1_F_51_2K_20160331_SMPTE_OV/pcm_9d7c15bc-8111-4604-9da1-cbdbd433712e.mxf' -map 0 -c:a copy '/media/subhaapu/33422C7D2A66F7E2/FINAL/audio.wav'
+
+MP3:
+ffmpeg -i '/media/subhaapu/Seagate Backup Plus Drive/EDIT_RUSH/MP4/Private_Tutor_20-MPEG-4 .mp4' -f mp3 Tutor.mp3
+
+H264 MOV :
+ffmpeg -i '/media/subhaapu/Seagate Backup Plus Drive/MASTER_FILES/SANKHA_CHIL/FEST_COPY_27-04-16/DELEVARABELS/BDMV/STREAM/00000.m2ts' -codec:v h264 -qscale:v 4.1 -v:b 1200 -pix_fmt yuv420p -acodec pcm_s16le -ar 48000 -flags +aic+mv4 SankhaChil_x264_acc_sd24p.mov
+
+MPEG4:
+
+ ffmpeg -i '/media/subhaapu/Seagate Backup Plus Drive/MASTER_FILES/SANKHA_CHIL/FEST_COPY_27-04-16/DELEVARABELS/BDMV/STREAM/00000.m2ts' -codec:v h264 -qscale:v 4.1 -v:b 1200 -pix_fmt yuv420p -s 960x540 -acodec libfaac -ar 48000 -flags +aic+mv4 SankhaChil_x264_acc_sd24p.mp4
+
+
+AVID_MXF:
+ffmpeg -i '/media/subhaapu/S_MUDI_HD/FOR_BLURAY/EXPORTS/INTERNATIONAL/FULL_MOVIE_INT.mov' -c:v dnxhd -vf scale=1280:720:lanczos -an -metadata project="MyProject" -metadata material_package_name="MyClip" -b:v 90M -f mxf_opatom My_Clip_v1.mxf -vn -metadata project="MyProject" -ac 1 -c:a pcm_s24le -ar 48000 -metadata material_package_name="MyClip" -f mxf_opatom  My_Clip_a1.mxf
+
+DCP TO MOV:
+ffmpeg -i '/media/subhaapu/Seagate Backup Plus Drive/PAANCH_ADHYAY_FTR_S_BEN-EN_IN_51-BEN_2K_20121009_SDC_OV/PAANCH_ADHYAY_FTR_SUB_UNENCRTY_ENC-reel-1-jp2k.mxf' -an -c:v prores_ks -profile:v 3 -q:v 4 -vendor ap10 -pix_fmt yuv422p10le -vf "scale=min(1920\\,a*1080):min(1080\\,1920/a),pad=1920:1080:(ow-iw)/2:(oh-ih)/2" RL01.mov
+
+
+BLUERAY(AC3) TO 5.1 WAVE:
+ffmpeg -i '/home/sonicsolutiondcpmastering/Documents/DLURAY_PROJECTS/DAUGHTER_OF_CLOUDE/SOURCE/BDMV/STREAM/00000.m2ts' -map 0:1 -c:a pcm_s24le audio_layer03.wav
+
+
+SPLITING AUDIO:
+ffmpeg -i '/home/sonicsolutiondcpmastering/Documents/DLURAY_PROJECTS/DAUGHTER_OF_CLOUDE/AUDIO/audio_layer03.wav' -filter_complex "channelsplit=channel_layout=5.1[FL][FR][FC][LFE][BL][BR]" -map "[FL]" front_left.wav -map "[FR]" front_right.wav -map "[FC]" front_center.wav -map "[LFE]" lfe.wav -map "[BL]" back_left.wav -map "[BR]" back_right.wav
+
+
+BLUERAY CODE FINAL WITH SUBTITLE:
+$ ffmpeg -y -i '/media/sonicsolutiondcpmastaring/TOPE/TOPE_BLUE
+RAY_PROJECT/BLUERAY_MATCH.mov' -an -c:v libx264 -preset slow -tune film -b:v 20M -pix_fmt yuv420p -vf "colormatrix=bt601:bt709,subtitles=SubtitleTrack01.srt" -x264opts bluray-compat=1:vbv-bufsize=30000:vbv-maxrate=40000:colorprim=bt709:transfer=bt709:colormatrix=bt709:fullrange=off VideoTrack01.ts
+
+
+Joining two vodeos:
+ffmpeg -i '/home/sonicsolutiondcpmastaring/Documents/DVDS/DUGGA/one.mov' -r 24 -codec:v h264 -qscale:v 4.1 -v:b 1200 -pix_fmt yuv420p  -c:a aac -ar 48000 -flags +aic+mv4 one.mp4
+
+ffmpeg -i '/home/sonicsolutiondcpmastaring/Documents/DVDS/DUGGA/two.mov' -r 24 -codec:v h264 -qscale:v 4.1 -v:b 1200 -pix_fmt yuv420p  -c:a aac -ar 48000 -flags +aic+mv4 two.mp4
+
+
+ffmpeg -i one.mp4 -f mpegts -c copy -bsf:v h264_mp4toannexb file-01.mpeg.ts
+
+ffmpeg -i two.mp4 -f mpegts -c copy -bsf:v h264_mp4toannexb file-02.mpeg.ts
+
+ffmpeg -isync -i "concat:file-01.mpeg.ts|file-02.mpeg.ts" -f mpeg4 Dugga_x264_ac3_2048x858_24p.mp4
+
+
+5.1 AUDIO_EXTRACT FROM MOV:
+ffmpeg -i '/media/sonicsolutiondcpmastaring/Untitled/BLUE/BYOMKESH PWARBO BLURAY.mov'  -acodec ac3 -ac 6 -ar 48000 -ac 6 -filter_complex "[0:2][0:3][0:4][0:5][0:6][0:7]amerge=inputs=6[aout]" -map "[aout]" result.ac3
+
+
+FOR AVID: 
+
+
+ffmpeg -i '/media/subhaapu/TOONZ1/Pather.Panchali-BD.Rip-720p-X264.AC3.Esubs-DDR.mkv' -map 0:0 -an -r 24 -c:v dnxhd -pix_fmt yuv422p -b:v 36M  -metadata project="LARNING" -metadata material_package_name="Pather_Panchali" -vf "scale=min(1920\\,a*1080):min(1080\\,1920/a),pad=1920:1080:(ow-iw)/2:(oh-ih)/2" -f mxf_opatom PatherPanchali.mxf
+
+
+
+ffmpeg -i '/media/subhaapu/TOONZ/The.Revenant.2015.DVDScr.XviD.AC3-ETRG/The.Revenant.2015.DVDScr.XviD.AC3-ETRG.avi' -c:a copy Reverant.ac3
+
+
+
+ffmpeg -i Reverant.ac3 -r 24 -filter_complex "channelsplit=channel_layout=5.1[FL][FR][FC][LFE][BL][BR]" -map "[FL]" 001_L.wav -map "[FR]" 002_R.wav -map "[FC]" 003_C.wav -map "[LFE]" 004_LFE.wav -map "[BL]" 005_LS.wav -map "[BR]" 006_RS.wav
+
+
+
+TO DV VIDEO:
+ffmpeg -i '/home/subhaapu/Documents/SUBTITLES/DURATTO/FC_EDIT_06(25Fps)_FC_H264.mov' -vcodec dvvideo -acodec pcm_s16le -s pal -qscale 5 PalDv.mov
+
+CHANGE AUDIO TO 48fps:
+ffmpeg -i /Users/TOONZ/Desktop/AUD-20170215-WA0000.mp3 -r 12 -c:a pcm_s24le -filter:a "atempo=2.0" Song0002.wav
+
+
+FFMPEG PLAYBACK DEC24_16:
+ffmpeg -lowres 2 -ss 0 -i j2c_2fb0aaa2-79be-4ee3-be79-6e42d5f678cd.mxf -ss 0 -i pcm_9c607d04-6ed7-4977-98ff-9fa7169c4c58.mxf -ac: 2 -c:v libx264 -f matroska - | ffplay -
+
+FFMPEG J2k MXF:
+ffmpeg -i Movie.avi -an -c:v libopenjpeg -profile:v 3 -cinema_mode 1 -format 0 -numresolution 6 -compression_level 30 -prog_order 4 -pix_fmt xyz12le -map 0:0 -metadata title="Picture Track" -metadata file_package_name="File Package:SMPTE 429-4 frame wrapping of JPEG 2000 codestreams" -metadata application_platform=Mac -metadata material_package_name="AS-DCP Material Package" -timecode 01:00:00:00 -s 2048x858 -f mxf_opatom Vid_Codec_test_Project.mxf
+
+FLV:
+ffmpeg -i video_origine.avi -ab 56 -ar 44100 -b 200 -r 15 -s 320x240 -f flv video_finale.flv
+
+
+MP4 To PORORES:
+ffmpeg -y -ss 00:12:00.000 -i '/media/subhaapu/48D9966513406ACE/BBC.Planet.Earth.2of5.Mountains.720p.avi' -ts 00:16:00.000 -c:v prores_ks -profile:v 3 -q:v 4 -vendor ap10 -pix_fmt yuv422p10le -s 2048x1152 -c:a  pcm_s16le '/media/subhaapu/Seagate Backup Plus Drive/DHUMKETU_STOCK/STOCK-LIB_TOONZ_MOUNTAIN01.mov'
+
+
+AVID_DNX_HD:
+ffmpeg -i '/media/sonicsolutiondcpmastaring/Seagate Backup Plus Drive1/Life.of.Pi.2012.DVDRip.XviD-PTpOWeR.avi' -an -r 24 -c:v dnxhd -pix_fmt yuv422p -b:v 36M -vf "scale=min(1920\\,a*1080):min(1080\\,1920/a),pad=1920:1080:(ow-iw)/2:(oh-ih)/2" -metadata project="LarningFromFilm" -metadata material_package_name="LifeOfPi" -f mxf_opatom LifeOfPI.mxf
+
+
+AC3 to 5.1:
+ffmpeg -i '/home/sonicsolutiondcpmastaring/Audio.ac3' -r 24 -filter_complex "channelsplit=channel_layout=5.1[FL][FR][FC][LFE][BL][BR]" -map "[FL]" front_left.wav -map "[FR]" front_right.wav -map "[FC]" front_center.wav -map "[LFE]" lfe.wav -map "[BL]" back_left.wav -map "[BR]" back_right.wav
+
+
+FMPG 4 FINAL:
+ffmpeg -i '/media/sonicsolutiondcpmastaring/HEMANTA/HEMANTA/EXPORT/HEMANTA FINAL_Ariline.mov' -codec:v h264 -qscale:v 4.1 -v:b 1200 -pix_fmt yuv420p  -c:a aac -ar 48000 -flags +aic+mv4 HEMANTA.mp4
+
+
+AUDIO 5.1 MArge:
+ffmpeg -i 1.wav -i 2.wav -i 3.wav -i 4.wav -i 5.wav -i 6.wav -filter_complex "[0:a][1:a][2:a][3:a][4:a][5:a]amerge=inputs=6[aout]" -map "[aout]" rl05_aout.wav
+
+
+FFPLAY:
+ffmpeg -ss 00 -i '/home/sonicsolutiondcpmastaring/Documents/BLUERAYS/A_CONFLICT/DELEVARABELS/BDMV/STREAM/00000.m2ts' -s 940x560 -c:v libx264 -c:a copy -f matroska - | ffplay -
+
+PRORES PROXY: 
+
+ffmpeg -y -i '/home/SubhajitEditor/Documents/DCP_MASTERS/KIRITI/NILACHALER_KIRITI_TEASER_WITH_CC/NilachalerKiri_TSR-1_S_51_2K_20180129_SMPTE_OV/j2c_601f1e74-a95f-4b03-97af-417e8baaca09.mxf' -i '/home/SubhajitEditor/Documents/DCP_MASTERS/KIRITI/NILACHALER_KIRITI_TEASER_WITH_CC/NilachalerKiri_TSR-1_S_51_2K_20180129_SMPTE_OV/pcm_49f58217-d5d9-45cd-bb5a-88d6b9bf41cf.mxf' -map 0:0 -map 1:0 -c:v prores_ks -profile:v 1 -q:v 4 -vendor ap10 -pix_fmt yuv422p10le -s 960x540 -c:a  pcm_s16le NilachalerKiri_TSR-1_S_51_2K_20180129_SMPTE_OV.mov
+
+
+
+DNxHD example
+ffmpeg -i input -c:v dnxhd -vf scale=1280x720,fps=30000/1001,format=yuv422p -b:v 110M -c:a pcm_s16le output.mov
+Output format container for DNxHD is typically MXF or MOV, but I'm unsure what Cinelerra prefers.
+
+DNxHR example
+If you want DNxHR add the profile output option such as -profile dnxhr_hq.
+
+Accepted values are: dnxhd, dnxhr_444, dnxhr_hqx, dnxhr_hq, dnxhr_sq, dnxhr_lb.
+
+More options
+For additional encoder specific options refer to:
+
+ffmpeg -h encoder=dnxhd
+Valid DNxHD parameters
+ffmpeg will complain and fail if you provide incorrect values. It will provide this list of what is accepted. I'm assuming 0/0 means the frame rate is not limited.
+
+960x720p
+bitrate: 42Mbps;  pixel format: yuv422p; framerate: 0/0
+bitrate: 60Mbps;  pixel format: yuv422p; framerate: 0/0
+bitrate: 75Mbps;  pixel format: yuv422p; framerate: 0/0
+bitrate: 115Mbps; pixel format: yuv422p; framerate: 0/0
+1280x720
+bitrate: 90Mbps;  pixel format: yuv422p10; framerate: 24000/1001
+bitrate: 90Mbps;  pixel format: yuv422p10; framerate: 25/1
+bitrate: 180Mbps; pixel format: yuv422p10; framerate: 50/1
+bitrate: 220Mbps; pixel format: yuv422p10; framerate: 60000/1001
+bitrate: 90Mbps;  pixel format: yuv422p;   framerate: 24000/1001
+bitrate: 90Mbps;  pixel format: yuv422p;   framerate: 25/1
+bitrate: 110Mbps; pixel format: yuv422p;   framerate: 30000/1001
+bitrate: 180Mbps; pixel format: yuv422p;   framerate: 50/1
+bitrate: 220Mbps; pixel format: yuv422p;   framerate: 60000/1001
+bitrate: 60Mbps;  pixel format: yuv422p;   framerate: 24000/1001
+bitrate: 60Mbps;  pixel format: yuv422p;   framerate: 25/1
+bitrate: 75Mbps;  pixel format: yuv422p;   framerate: 30000/1001
+bitrate: 120Mbps; pixel format: yuv422p;   framerate: 50/1
+bitrate: 145Mbps; pixel format: yuv422p;   framerate: 60000/1001
+1440x1080p
+bitrate: 63Mbps;  pixel format: yuv422p; framerate: 0/0
+bitrate: 84Mbps;  pixel format: yuv422p; framerate: 0/0
+bitrate: 100Mbps; pixel format: yuv422p; framerate: 0/0
+bitrate: 110Mbps; pixel format: yuv422p; framerate: 0/0
+1440x1080i
+bitrate: 80Mbps;  pixel format: yuv422p; framerate: 0/0
+bitrate: 90Mbps;  pixel format: yuv422p; framerate: 0/0
+bitrate: 100Mbps; pixel format: yuv422p; framerate: 0/0
+bitrate: 110Mbps; pixel format: yuv422p; framerate: 0/0
+bitrate: 120Mbps; pixel format: yuv422p; framerate: 25/1
+bitrate: 145Mbps; pixel format: yuv422p; framerate: 30000/1001
+1920x1080p
+bitrate: 175Mbps; pixel format: yuv422p10; framerate: 24000/1001
+bitrate: 185Mbps; pixel format: yuv422p10; framerate: 25/1
+bitrate: 365Mbps; pixel format: yuv422p10; framerate: 50/1
+bitrate: 440Mbps; pixel format: yuv422p10; framerate: 60000/1001
+bitrate: 115Mbps; pixel format: yuv422p;   framerate: 24000/1001
+bitrate: 120Mbps; pixel format: yuv422p;   framerate: 25/1
+bitrate: 145Mbps; pixel format: yuv422p;   framerate: 30000/1001
+bitrate: 240Mbps; pixel format: yuv422p;   framerate: 50/1
+bitrate: 290Mbps; pixel format: yuv422p;   framerate: 60000/1001
+bitrate: 175Mbps; pixel format: yuv422p;   framerate: 24000/1001
+bitrate: 185Mbps; pixel format: yuv422p;   framerate: 25/1
+bitrate: 220Mbps; pixel format: yuv422p;   framerate: 30000/1001
+bitrate: 365Mbps; pixel format: yuv422p;   framerate: 50/1
+bitrate: 440Mbps; pixel format: yuv422p;   framerate: 60000/1001
+bitrate: 36Mbps;  pixel format: yuv422p;   framerate: 24000/1001
+bitrate: 36Mbps;  pixel format: yuv422p;   framerate: 25/1
+bitrate: 45Mbps;  pixel format: yuv422p;   framerate: 30000/1001
+bitrate: 75Mbps;  pixel format: yuv422p;   framerate: 50/1
+bitrate: 90Mbps;  pixel format: yuv422p;   framerate: 60000/1001
+bitrate: 350Mbps; pixel format: yuv422p10; framerate: 24000/1001
+bitrate: 390Mbps; pixel format: yuv422p10; framerate: 25/1
+bitrate: 440Mbps; pixel format: yuv422p10; framerate: 30000/1001
+bitrate: 730Mbps; pixel format: yuv422p10; framerate: 50/1
+bitrate: 880Mbps; pixel format: yuv422p10; framerate: 60000/1001
+1920x1080i
+bitrate: 185Mbps; pixel format: yuv422p10; framerate: 25/1
+bitrate: 220Mbps; pixel format: yuv422p10; framerate: 30000/1001
+bitrate: 120Mbps; pixel format: yuv422p;   framerate: 25/1
+bitrate: 145Mbps; pixel format: yuv422p;   framerate: 30000/1001
+bitrate: 185Mbps; pixel format: yuv422p;   framerate: 25/1
+bitrate: 220Mbps; pixel format: yuv422p;   framerate: 30000/1001
+
+
+DPX 10 bIT:
+
+ffmpeg -y -i '/home/SubhajitEditor/Documents/DCP_MASTERS/MICHAEL_END_SCROLL_TESTmov.mov' -r 24 -pix_fmt gbrp10le -vcodec dpx './%010d.dpx'
+
+STILL TO DPX (FOR 7 SECONDS):
+ffmpeg -y -loop 1 -i '/home/SubhajitEditor/Documents/DCPS/CC.tiff' -r 24 -t 00:00:07.000 -pix_fmt gbrp10le -vcodec dpx './%010d.dpx'
+
+5.1 BLANK AUDIO(FOR 2 SECONDS):
+ffmpeg -f lavfi -i anullsrc=channel_layout=5.1:sample_rate=48000 -r 24 -t 00:00:07.000 -c:a pcm_s24le Silent.wav
+
+CAPTURE IN and OUT FROM YOUTUBE:
+ 1. youtube-dl -g  https://www.youtube.com/watch?v=CYXG9rG0Jf0ffmpeg
+ 2. ffmpeg -i "https://r15---sn-ci5gup-h55e.googlevideo.com/videoplayback?ei=APkYW4yqJNKv1Aa5m7aYCQ&lmt=1525102068962980&sparams=aitags%2Cclen%2Cdur%2Cei%2Cgir%2Cid%2Cinitcwndbps%2Cip%2Cipbits%2Citag%2Ckeepalive%2Clmt%2Cmime%2Cmm%2Cmn%2Cms%2Cmv%2Cpl%2Crequiressl%2Csource%2Cexpire&gir=yes&fvip=2&dur=40271.333&signature=5F616F2EFE67FF8EAB126C4EB66F3E7B28EE43D4.BF40C2733726D7C36F5015D7A48D3CA685BDDEDF&initcwndbps=233750&c=WEB&itag=248&clen=5041922823&aitags=133%2C134%2C135%2C136%2C137%2C160%2C242%2C243%2C244%2C247%2C248%2C278&ipbits=0&key=yt6&expire=1528384864&ms=au%2Crdu&id=o-ADHhY1x_yQcvD0tAYQfsFjWSK0Wo8K5TfhQy-Zpz6b0v&mv=m&keepalive=yes&mt=1528363150&mn=sn-ci5gup-h55e%2Csn-h5576n7r&pl=20&source=youtube&mm=31%2C29&requiressl=yes&ip=122.163.99.184&mime=video%2Fwebm&ratebypass=yes" -ss 00:00:00.00 -t 00:05:00.00 -c:v prores_ks -profile:v 3 -q:v 4 -vendor ap10 -pix_fmt yuv422p10le -c:a  pcm_s16le SEA_STOCK_FOOTAGE.mov
+
+
+PDF TO KINDLE PDF
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=myNewFile.pdf ./The\ Garden\ of\ Words\ \(2016\)\ \(Digital\)\ \(danke\).pdf 
+
+SOFTWARE INSTALL:
+sudo dnf install '/home/SubhajitEditor/Downloads/dcpomatic2-2.12.8-1.fc28.x86_64.rpm'
+
+SOFTWARE UNINSTALL:
+sudo dnf remove dcpomatic2-2.12.8-1.fc28.x86_64
+
+LOWRES PDF:
+convert -density 100x100 -quality 60 -compress jpeg '/home/SubhajitEditor/Documents/SUBMISSION/IFFI2018/AHARE/20180731_112553.png' AHARE_CC.pdf
+
+
+24 FPS FRAME TO .MS
+
+1frame = .40ms
+So, if we need 4frames we have to put 40x4=160ms
+OR -t 00:00:00.160
+
+STREO TO MONO SPLIT:
+ffmpeg -i stereo.wav -map_channel 0.0.0 left.wav -map_channel 0.0.1 right.wav
+
+STREO TO 5.1 PAN
+ffmpeg -i '/home/SubhajitEditor/audio.wav' -filter_complex "[0:a]pan=5.1(side)|FL=FL|FR=FR|LFE<FL+FR|SL=FL|SR=FR[a]" -map 0 -map -0:a -map "[a]" -c copy -c:a pcm_s24le audio_split.wav
+
+Marge Separate Audio Video Source
+ffmpeg -i '/home/subhajiteditor/Documents/EDITORIAL/LC_TRAILER_OUT_01_NA.mp4' -i '/home/subhajiteditor/Documents/EDITORIAL/LOKKHICHHELE TRAILER STEREO MIX_01.wav' -map 0:0 -map 1:0 -c:v copy -c:a aac -ar 48000 -flags +aic+mv4 HEMANTA.mp4
+
+Split PDF
+ sudo apt-get install pdftk
+pdftk '/home/subhajiteditor/Dropbox/SUBMISSION/IFFI_LCC/Scan.pdf' burst
+
+PDF PAGE from 7 to 113
+pdftk '/home/subhajiteditor/Documents/Billy Collins - MasterClass - Reading and Writing Poetry/Dhusar-Pandulipi.pdf' cat 7-113 output Dhusar_Pandulipi-pp07-113.pdf
+
+
+ffmpeg -y -ss 01:35:00.000 -i '/home/subhajiteditor/Documents/EDITORIAL/00000.m2ts' -t 00:01:00.00 -map 0:0 -map -0:1 -c:v prores_ks -profile:v 3 -q:v 4 -vendor ap10 -pix_fmt yuv422p10le -c:a pcm_s16le 'Seg06.mov'
+
+
+
+MPEG4 with  AAC5.1
+
+Video
+Format                                   : AVC
+Format/Info                              : Advanced Video Codec
+Format profile                           : High@L4
+Format settings                          : CABAC / 4 Ref Frames
+Format settings, CABAC                   : Yes
+Format settings, Reference frames        : 4 frames
+Codec ID                                 : avc1
+Codec ID/Info                            : Advanced Video Coding
+Duration                                 : 16 s 959 ms
+Bit rate                                 : 190 kb/s
+Width                                    : 1 920 pixels
+Height                                   : 1 080 pixels
+Display aspect ratio                     : 16:9
+Frame rate mode                          : Constant
+Frame rate                               : 24.000 FPS
+Color space                              : YUV
+Chroma subsampling                       : 4:2:0
+Bit depth                                : 8 bits
+Scan type                                : Progressive
+Bits/(Pixel*Frame)                       : 0.004
+
+Audio
+ID                                       : 2
+Format                                   : AAC LC
+Format/Info                              : Advanced Audio Codec Low Complexity
+Codec ID                                 : mp4a-40-2
+Duration                                 : 17 s 131 ms
+Bit rate mode                            : Variable
+Bit rate                                 : 353 kb/s
+Maximum bit rate                         : 384 kb/s
+Channel(s)                               : 6 channels
+Channel layout                           : C L R Ls Rs LFE
+Sampling rate                            : 48.0 kHz
+Frame rate                               : 46.875 FPS (1024 SPF)
+Compression mode                         : Lossy
+Stream size                              : 732 KiB (64%)
+Default                                  : Yes
+Alternate group                          : 1
+
+
+ffmpeg -i '/home/subhajiteditor/Documents/EDITORIAL/00000.m2ts' -map 0:0 -map 0:1 -r 24 -codec:v h264 -x264-params 'cabac'='1':'ref'='4':'deblock'='1:-1:-1':'analyse'='0x3:0x133':'me'='umh':'subme'='9':'psy'='1':'psy_rd'='1.00:0.15':'mixed_ref'='1':'me_range'='24':'chroma_me'='1':'trellis'='2':'8x8dct'='1':'cqm'='0':'deadzone'='21,11':'fast_pskip'='0':'chroma_qp_offset'='-3':'lookahead_threads'='1':'sliced_threads'='0':'nr'='0':'decimate'='1':'interlaced'='0':'bluray_compat'='0':'constrained_intra'='0':'bframes'='3':'b_pyramid'='2':'b_adapt'='2':'b_bias'='0':'direct'='3':'weightb'='1':'open_gop'='0':'weightp'='2':'keyint'='250':'keyint_min'='23':'scenecut'='40':'intra_refresh'='0':'rc_lookahead'='60':'rc'='2pass':'mbtree'='1':'bitrate'='2250':'ratetol'='1.0':'qcomp'='0.60':'qpmin'='0':'qpmax'='69':'qpstep'='4':'cplxblur'='20.0':'qblur'='0.5':'vbv_maxrate'='31250':'vbv_bufsize'='31250':'nal_hrd'='none':'filler'='0':'ip_ratio'='1.40':'aq'='1:1.00'  -c:a aac -b:a 384k -ac 6 -flags +aic+mv4 one.mp4
+
+
+
+Displaying TimeCodes / TimeStamps using FFmpeg’s drawtext filter
+This is a very useful application of the drawtext filter and is used in demonstrating low-latency applications or visual quality testing so that one knows precisely what the timestamps/timecodes are at each time.
+
+ffmpeg -i inputClip.mp4 -vf "drawtext=text='timestamp: %{pts \: hms}': x=500: y=500: fontsize=32:fontcolor=yellow@0.9: box=1: boxcolor=black@0.6" -c:a copy output.mp4
+This uses the timestamp and pts options to display time in hour:min:sec format using the hms format specifier.
+
+Adding Text with Background Color using FFmpeg’s drawtext filter
+To add a background color, we need
+
+ffmpeg -i inputClip.mp4 -vf "drawtext=text='© Krishna':x=(1100-text_w):y=(600-text_h):fontsize=32:fontcolor=black:box=1:boxcolor=white@0.5: boxborderw=5" -c:a copy output.mp4
+
+Extract Subtitile for Video file
+ffmpeg -i demo.mkv -map 0:s:0 sub.srt
+
+Stream mapping:
+  Stream #0:0 -> #0:0 (copy)                                  Video to video
+  Stream #0:1 -> #0:1 (copy)                                  Audio to Audio
+  Stream #1:0 -> #0:2 (subrip (srt) -> mov_text (native))     Second Input file stream 0 to Third Stream
+
+Bengali Subtitle
+
+ASS Header Entry:
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,ArialUnicodeMS,20,&H0080FFFF,&H0300FFFF,&H00000000,&H02000000,0,0,0,0,100,100,0,0,1,0.4,0,2,10,10,10,1
+
+ffmpeg -sub_charenc CP1250 -i '/home/subhajiteditor/Videos/The Art of Film Editing-myVps38Tv_Q.mkv' -c:v libx264 -preset slow -tune film -b:v 20M -pix_fmt yuv420p -vf "ass='B to B.ass'" VideoTrack01.mp4
+
+
+Pad 4:3 into 16:9
+ffmpeg \
+    -i input_file \
+    -filter:v "pad=ih*16/9:ih:(ow-iw)/2:(oh-ih)/2" \
+    -c:a copy \
+    output_file
+    
+Video parameters SAR, PAR, DAR
+   PAR - pixel aspect ratio, the aspect ratio of a single pixel, the majority of the pixel aspect ratio of 1: 1, i.e. a square pixel, if not 1: 1, then the pixel is to be understood that the rectangular pixels. PAR with a common ratio of (1: 1, 10: 11, 40:33, 16:11, 12:11).
+   DAR - display aspect ratio, display aspect ratio. I.e. the final ratio of width to height of the playing out of the picture. Such as common 16: 9 and 4: 3 and the like. Zoom video should be according to this ratio, otherwise it will make the image look like squashed or stretched.
+   SAR - Sample aspect ratio, the aspect ratio of the sample, expressed as the ratio of the transverse and longitudinal number of pixels of the number of pixels, the aspect ratio is the resolution we usually mentioned. When image acquisition is to transverse the longitudinal dot gathering collection configuration, the ratio of the longitudinal and transverse dot points. Such as VGA image 640/480 = 4: 3, D-1 PAL images 720/576 = 5: 4, high-definition video.
+
+Three relationships:
+PAR x SAR = DAR
+or
+PAR = DAR/SAR.
+DAR = HORIZONTAL_RESOLUTION / VERTICAL_RESOLUTION * SAR
+
+results in:
+
+DAR = 176/144 * 12/11 = 1,333333333 = 4/3
+
+ffmpeg -i input.mp4 -y -r 12 -filter:v "scale=iw*min(176/iw\,144/ih):ih*min(176/iw\,144/ih),pad=176:144:(176-iw*min(176/iw\,144/ih))/2:(144-ih*min(176/iw\,144/ih))/2,setdar=11:9" -vcodec h263 -b:v 55k -crf 30 -minrate:v 0k -maxrate:v 63k -bufsize:v 128k -acodec libfaac -ac 1 -ab 32k -ar 22050 output.3gp
+
+STILL To Mov:
+ffmpeg -r 24 -pattern_type glob -i './*.tga' -an  -c:v prores_ks -profile:v 3 -q:v 4 -vendor ap10 -pix_fmt yuv422p10le  'Film_Leader_24p.mov'
+
+WAV to MP3
+ffmpeg -i audio.wav -acodec libmp3lame audio.mp3
+
+
+# list audio channels
+
+ffprobe file.mxf 2>&1 | grep Audio
+
+EXTRACT AUDIO
+ffmpeg -i input.mxf -map 0:a:0 -c copy ~/output/a1.wav -map 0:a:1 -c copy ~/output/a2.wav -map 0:a:2 -c copy ~/output/a3.wav -map 0:a:3 -c copy ~/output/a4.wav
+
+
+
+BENGALI SUBTITLE WITH ALPHA MOV(PNG)
+
+ASS HEADER FILE 
+
+[Script Info]
+; This script was created by subtitleeditor (0.54.0)
+; https://kitone.github.io/subtitleeditor/
+ScriptType: V4.00+
+PlayResX: 1366
+PlayResY: 768
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,AdarshaLipiNormal,65,&H0080FFFF,&H0300FFFF,&H00000000,&H02000000,0,0,0,0,100,100,0,0,1,0.4,0,2,40,40,40,130
+
+
+
+ON 2k 24fps
+ffmpeg -y -f lavfi -i  "color=color=black@0.0:size=2048x858,format=rgba, ass='/home/subhajiteditor/B to B.ass':alpha=1" -r 24 -c:v png  -t "00:01:00.000" -threads 0 "video.mov" -stats
+
+FINAL
+ffmpeg -y -f lavfi  -i  "color=color=black@0.0:size=2048x858,format=rgba, ass='/home/subhajiteditor/B to B.ass':alpha=1" -c:v png -r 24 -an -t "00:02:00.000" -threads 0 "REEL01.mov" -stats
+
+
+
+Video To Gif
+1     ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 '/home/subhajiteditor/Screen Capture 2022-01-12 at 20.16.48.mp4'
+2     ffmpeg -i '/home/subhajiteditor/Screen Capture 2022-01-12 at 20.16.48.mp4' -vf "fps=22,scale=1024:-1:flags=lanczos,palettegen" palette.png
+3     ffmpeg -i '/home/subhajiteditor/Screen Capture 2022-01-12 at 20.16.48.mp4' -i palette.png -filter_complex "fps=24,scale=1024:-1:flags=lanczos[x];[x][1:v]paletteuse" output.gif
+
+
+
+
+24 FPS AUDIO to 25 FPS AUDIO (Conform)
+
+ffmpeg -i '/home/subhajiteditor/Documents/EDITORIAL/KH/24p_Mono/Untitled Sequence_16.wav' -filter:a "atempo=1.0417" -c:a pcm_s24le -b:a 48000 Track016.wav
+
+
+ffmpeg -i '1899.S01E08.The.Key.1080p.NF.WEB-DL.DDP5.1.Atmos.H.264-SMURF.mkv' -map 0:1 -c:a pcm_s24le -b:a 48000 1899-S01_EP08-1080-24p-51-Dolby_Digital_Plus_with_Dolby_Atmos.wav
+
+
