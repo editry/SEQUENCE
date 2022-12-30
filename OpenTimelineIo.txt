@@ -1,0 +1,42 @@
+OpenTimelineIO SCRIPTS
+
+
+AAF To OTIO:
+import opentimelineio as otio
+mytimeline = otio.adapters.read_from_file("something.edl")
+otio.adapters.write_to_file(mytimeline, "something.otio")
+
+OTIO TO XML:
+import opentimelineio as otio
+mytimeline = otio.adapters.read_from_file('/home/SubhajitEditor/something.otio')
+otio.adapters.write_to_file(mytimeline, "something.xml")
+
+OPEN A TIMELINE:
+otioview '/home/SubhajitEditor/something.otio'
+
+
+EXTRACTING CG MARKING FROM AAF:
+import opentimelineio as otio
+timeline = otio.schema.Timeline()
+track = otio.schema.Track()
+track.name = "V1"
+timeline.tracks.append(track)
+TIMELINE_Rl_01 = otio.adapters.read_from_file('/home/SubhajitEditor/something.otio')
+
+
+
+
+
+clip = otio.schema.Clip()
+clip.name = "Wedding Video"
+track.append(clip)
+
+
+otio.adapters.write_to_file(timeline, "REEL01_VFX_TIMELINE.otio")
+
+
+
+
+
+
+
